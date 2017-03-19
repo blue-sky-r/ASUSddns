@@ -1,4 +1,4 @@
-## ASUS Dynamic DNS toolkit for dd-wrt
+# ASUS Dynamic DNS toolkit for dd-wrt
 This repository contains ASUS DDNS toolkit as command line helper scripts for handling ASUS DDNS operations like:
 * registration - creating new DNS record
 * checking - active DNS record verification
@@ -15,7 +15,7 @@ The main know-how comes from GIT repository Nerd based on reverse engineered som
   * very efficient on router CPU, RAM (no cron jobs, etc)
   * configurable logging facility
 
-#### ASUS DDNS
+### ASUS DDNS
 ASUS Dynamic DNS service (DDNS) is free service provided by ASUS company for most ASUS routers. The service allows you to register custom
  unique name within ASUSCOMM.COM domain, for example myhome.asuscomm.com . The registration and updates are handled seemlessly
  by ASUS original firmware. However, by installing dd-wrt you will loose all this functionality as the dd-wrt firmware is
@@ -39,7 +39,7 @@ On the other hand **ASUS DDNS** service:
  * free as long as you own ASUS device
  * limited by ASUSCOMM.COM domain
  
-#### Implementation
+### Implementation
 As mentioned above the dd-wrt GUI do not have any support for ASUS DDNS service. Despite having custom configuration
  for DDNS ASUS DDNS is so different so dd-wrt customization cannot be easily and efficiently used. Presented solution 
  is limited to command line only so no GUI visibility is implemeted. GUI integration would require much more internal
@@ -56,7 +56,7 @@ Due to minimize flash memory footprint only terse comments are in the script its
 In case of any problems please consult the section Troubleshooting. Once ASUS DDNS toolkit is setup correctly, the 
  presented solution works flawlesly as you will see bellow.
 
-#### Installation
+### Installation
 There are two ways to install ASUS DDNS toolkit:
 * manually copy files to required locations - for advanced dd-wrt users 
 * package - unpack the provided package [asus-ddns.tgz](pkg/asus-ddns.tgz "current version") (recommended way to install, assumes JFFS active)
@@ -84,13 +84,13 @@ ddns.ipup is placed to /jffs/etc/config ... executed when ppp interface going up
 Alternatively ddns.ipup could be renamed to ddns.wanup (consult [dd-wrt WiKi](https://www.dd-wrt.com/wiki/index.php/Script_Execution) for details),
  but .ipup looks more appropriate (have tested both variants, they are fully functional, but like more .ipup).
      
-#### Dependencies
+### Dependencies
 JFFS - The installation package expects /jffs file system active on the router. JFFS has to be enabled on dd-wrt 
 page **Administration / Management** in section **JFFS2**
  
 ![jffs](screenshots/jffs.png)
 
-#### Usage
+### Usage
 Execution asus-ddns.sh without any parameter shows usage help:
 
     usage: asus-ddns.sh [-m mac] [-i 1.2.3.4|auto] [-p PIN] [-log] (check|update|register|wget) [name]
@@ -118,7 +118,7 @@ Each parameter can be specified by one character (terse) option or by more descr
 All printout goes to stdout by default which is suitable for troubleshooting. Optional syslog logging is activated by
  parameter -l or -log. The order of parameters is not important. If provided more than once, the last one wins.
   
-#### Register DNS record
+### Register DNS record
 The first time we have to register our name to create brand new DNS record. This is one time process and is the most 
  difficult step of the process due to lack of returning http code by built-in dd-wrt [wget](http://svn.dd-wrt.com/browser/src/router/busybox/networking/wget.c "wget.c source"). 
 
@@ -143,7 +143,7 @@ explicit usage (from any other linux device):
     asus-ddns.sh -mac 11:22:33:44:55:66 -ip 111.222.33.44 -pin 123456 register myhome
 
 
-#### Verify DNS record
+### Verify DNS record
 
 preferred usage (from ASUS router):
 
@@ -175,11 +175,11 @@ The ASUS NS is using TTL=120 sec. That means in average the updated record shoul
  keep expired records longer. You can perform CHECK after update to verify that record was updated, but please consider 
  TTL and do sleep at least TTL seconds between UPDATE and CHECK to get conclusive result.
 
-#### Troubleshooting
+### Troubleshooting
 
 #### Possible problems
 
-#### Configuration
+### Configuration
 Config values are global shell variables (You shoudn't need to touch any of these):
 
 
@@ -220,10 +220,12 @@ Config values are global shell variables (You shoudn't need to touch any of thes
     URL="$NS/ddns/$ACTION.jsp?hostname=$DNS_NAME&myip=$WAN_IP"
 
 
-#### Cheating
+### Cheating
 
-#### Credits
+### Credits
 The main credit goes to [BigNerd95](https://github.com/BigNerd95 "BigNerd95 on GitHub") for his [ASUSddns Project](https://github.com/BigNerd95/ASUSddns "ASUSddns on GitHub")
+
+Hope it helps ...
 
 #### History
  version 2017.3 - the initial GitHub release in March 2017
