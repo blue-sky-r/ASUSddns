@@ -1,0 +1,3 @@
+#!/bin/sh
+
+asus-ddns.sh -l update
