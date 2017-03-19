@@ -1,6 +1,6 @@
 # dd-wrt
 
-availabke subprojects:
+available subprojects:
 
-* ASUS DDNS
+* [ASUS Dynamic DNS service](asus-ddns/)
 * ABS DNS
