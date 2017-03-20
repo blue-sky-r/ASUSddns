@@ -98,13 +98,13 @@ In case of any problems please consult the section [Troubleshooting](#trubleshoo
 
 ### Installation
 
-There are two ways to install this ASUS DDNS toolkit:
+There are two ways to install this ASUS DDNS toolkit package:
 * manually copy files to required locations - for advanced dd-wrt users 
 * package - unpack the provided package [asus-ddns.tgz](pkg/asus-ddns.tgz "current version") (recommended way to install, assumes JFFS active)
 
 example of installation to gateway router:
 
-1) copy package asus-ddns.tgz to the router /tmp directory (or any other writable dir like /jffs):
+1) copy package [asus-ddns.tgz](pkg/asus-ddns.tgz "current version") to the router /tmp directory (or any other writable dir like /jffs):
 ```
     > scp asus-ddns.tgz gateway:/tmp/
 ```
@@ -119,13 +119,13 @@ example of installation to gateway router:
     jffs/etc/config/ddns.ipup
 ```
 
-The package contains only two scripts:
+The package [asus-ddns.tgz](pkg/asus-ddns.tgz "current version") contains only two scripts:
 
-#####asus-ddns.sh
+###### asus-ddns.sh
  * the main cli script to handle all ASUS DDNS functionality
  * placeed to /jffs/bin (automaticaly located in PATH)
 
-#####ddns.ipup
+###### ddns.ipup
  * scipt to be executed by dd-wrt on state change (consult [dd-wrt WiKi](https://www.dd-wrt.com/wiki/index.php/Script_Execution) for details)
  * placed to /jffs/etc/config (executed when ppp interface going up)
  * contains just call to ASUS DDNS update with logging enabled: 
@@ -135,11 +135,10 @@ The package contains only two scripts:
      
 ### Dependencies
 
-JFFS - The installation package expects /jffs file system active on the router. JFFS has to be enabled on dd-wrt 
+JFFS - The installation package [asus-ddns.tgz](pkg/asus-ddns.tgz "current version") expects /jffs file system active on the router. JFFS has to be enabled on dd-wrt 
 page **Administration / Management** in section **JFFS2**
  
 ![jffs](screenshots/jffs.png)
-
 
 _Advanced users can install package into /tmp (or any other) dir to avoid using JFFS at all._
 
@@ -171,6 +170,14 @@ Each parameter can be specified by one character (terse) option or by more descr
 
 All printout goes to stdout by default which is suitable for troubleshooting. Optional syslog logging is activated by
  parameter -l or -log. The order of parameters is not important. If provided more than once, the last one wins.
+
+As always, please use common sense when doing ASUS DDNS service updates:
+
+* the wrongest way - schedule a cron to do a [raw wget](#troubleshooting) update every minute. 
+  This should be considered as serious DDoS attack on ASUS DNS infrastructe. 
+* the wrong way - schedule frequent (like every 5,10,15 min) cron [raw wget](#troubleshooting) updates 
+* not the right way - schedule frequent periodic cron updates by [asus-ddns.sh update](#update-dns-record) 
+* the right way - execute update only on wan ip address change as implemented by ddns.ipup or ddns.wanup (by proper naming and location)
   
 ### Register DNS record
 
@@ -314,22 +321,22 @@ _Please note that extensive writes like syslog on the router will wearout flash 
  
 #### Possible problems
 
-* JFFS not available on the router:
-  * install scripts into /tmp by (you have to solve boot persistence by yourself):  
-    
-`    root@gateway:/# tar zxvf /tmp/asus-ddns.tgz -C /tmp`
-
+* JFFS is not available on the router:
+  * install scripts into /tmp by (you have to solve boot persistence by yourself):    
+    `   
+    root@gateway:/# tar zxvf /tmp/asus-ddns.tgz -C /tmp
+    `
 * command completion [ TAB ] in dd-wrt shell (busybox) does not auto-complete asus-ddns.sh
-  * check execute permission and fix:
-
-`    root@gateway:~# ls -l /jffs/bin/asus-ddns.sh`
-`    -rwxrwxr-x    1 1000     1000          3247 Mar 19 20:44 /jffs/bin/asus-ddns.sh`  
-
+  * check execute permission and fix: 
+    `   
+    root@gateway:~# ls -l /jffs/bin/asus-ddns.sh
+    -rwxrwxr-x    1 1000     1000          3247 Mar 19 20:44 /jffs/bin/asus-ddns.sh  
+    `
   * check PATH:  
-
-`    root@gateway:~# echo $PATH`
-`    /bin:/usr/bin:/sbin:/usr/sbin:/jffs/sbin:/jffs/bin:/jffs/usr/sbin:/jffs/usr/bin:/mmc/sbin:/mmc/bin:/mmc/usr/sbin:/mmc/usr/bin:/opt/sbin:/opt/bin:/opt/usr/sbin:/opt/usr/bin`   
-   
+    `    
+    root@gateway:~# echo $PATH
+    /bin:/usr/bin:/sbin:/usr/sbin:/jffs/sbin:/jffs/bin:/jffs/usr/sbin:/jffs/usr/bin:/mmc/sbin:/mmc/bin:/mmc/usr/sbin:/mmc/usr/bin:/opt/sbin:/opt/bin:/opt/usr/sbin:/opt/usr/bin
+    `      
 * my DNS name is not updated immediately:
   * you have to wait max TTL (120 sec), in average after TTL/2 DNS record should be updated
   
@@ -386,15 +393,7 @@ there are situations like:
 when registered name bound to the device should be recovered and used again. This is a kind of _white-hat_ cheating.
  In this case feel free to use asus-ddns toolkit to handle registered name release and transfer. Please use common sense
  as abuse and misuse of ASUS free DDNS service could cause unwanted response (even shutdown of this service) from ASUS.
- See section [Delete DNS record](#delete-dns-record) how to use white-hat cheating to recover lost access to registered name.  
-
-As always, please use common sense (which is not so common nowdays anymore) when doing ASUS DDNS service updates:
- 
-* the wrongest way - schedule cron to a [raw wget](#troubleshooting) update every minute. 
-  This should be considered as serious DDoS attack on ASUS DNS infrastructe - see above. 
-* the wrong way - schedule frequent (like every 5,10,15 min) cron [raw wget](#troubleshooting) updates 
-* not the right way - schedule frequent periodic cron updates by [asus-ddns.sh update](#update-dns-record) 
-* the right way - do DNS update only on wan ip address change as implemented by ddns.ipup or ddns.wanup (by proper naming and location)
+ See section [Delete DNS record](#delete-dns-record) how to use white-hat cheating to recover lost access to the registered name.  
 
 ### Credits
 The main credit goes to [BigNerd95](https://github.com/BigNerd95 "BigNerd95 on GitHub") for his [ASUSddns Project](https://github.com/BigNerd95/ASUSddns "ASUSddns on GitHub")
