@@ -41,7 +41,7 @@ section links:
 * [History](#history)
 
 ### ASUS DDNS
-ASUS Dynamic DNS service (DDNS) is free service provided by ASUS company for most ASUS routers. The service allows you to register custom
+[ASUS Dynamic DNS service (DDNS)](http://asusddns.blogspot.sk/ "ASUS DDNS") is free service provided by ASUS company for most ASUS routers. The service allows you to register custom
  unique name within ASUSCOMM.COM domain, for example myhome.asuscomm.com . The registration and updates are handled seemlessly
  by ASUS original firmware. However, by installing dd-wrt you will loose all this functionality as the dd-wrt firmware is
  supporting wide range of DDNS services except ASUS DDNS. 
@@ -55,7 +55,7 @@ Many publicly available **DDNS** services has mixed reputation for:
  * various domains
  * not limited to particular device
  
-On the other hand **ASUS DDNS** service:
+On the other hand [ASUS DDNS](http://asusddns.blogspot.com/2014/09/whats-ddns.html) service:
  * no registration required (owning qualified ASUS device is sufficient)
  * extra long DNS record expiration (based on web search over two-three years)
  * no need for frequent updates (see above)
@@ -81,7 +81,7 @@ Do not relay any security asumption on actual DNS record. Always use additional 
 ### Implementation
 
 As mentioned above the dd-wrt GUI do not have any support for ASUS DDNS service. Despite having custom configuration
- for DDNS ASUS DDNS is so different so dd-wrt customization cannot be easily and efficiently used. Presented solution 
+ for DDNS [ASUS DDNS](http://asusddns.blogspot.com/2014/09/whats-ddns.html) is so different so dd-wrt customization cannot be easily and efficiently used. Presented solution 
  is limited to command line only so no GUI visibility is implemeted. GUI integration would require much more internal
  dd-wrt knowledge ... 
 
@@ -159,7 +159,7 @@ Execution asus-ddns.sh without any parameter shows usage help:
                 update      ... update active DBS record for name
                 register    ... register new DNS record for name
                 wget        ... troubleshooting 
-    name    ... name (hostname or FQDN) for DNS record (after first successful registration optional)
+    name    ... name (hostname or FQDN) for DDNS record (after first successful registration optional)
     
 Each parameter can be specified by one character (terse) option or by more descriptive option. The following options lines are identical:
 
@@ -176,7 +176,7 @@ As always, please use common sense when doing ASUS DDNS service updates:
 * the wrongest way - schedule a cron to do a [raw wget](#troubleshooting) update every minute. 
   This should be considered as serious DDoS attack on ASUS DNS infrastructe. 
 * the wrong way - schedule frequent (like every 5,10,15 min) cron [raw wget](#troubleshooting) updates 
-* not the right way - schedule frequent periodic cron updates by [asus-ddns.sh update](#update-dns-record) 
+* acceptable way - schedule periodic cron updates by [asus-ddns.sh update](#update-dns-record) 
 * the right way - execute update only on wan ip address change as implemented by ddns.ipup or ddns.wanup (by proper naming and location)
   
 ### Register DNS record
@@ -250,7 +250,9 @@ ASUS do not provide any modality to delete existing DNS record. Based on few for
   * find MAC and PIN of device to which the name is bound
   * use white-hat cheating to bind new dummy name to this device
   * old name will be unbound and become available again immediatly (after TTL)
- 
+
+Based on official [ASUS Service Portal Tip](http://asusddns.blogspot.com/2014/09/how-to-re-use-your-ddns-hostname-on-new.html)
+
 #### Get HW info
 
 To get ASUS device HW info use 'info' action (this is the fallback action if not recognized as any valid action). This
@@ -322,26 +324,29 @@ _Please note that extensive writes like syslog on the router will wearout flash 
 #### Possible problems
 
 * JFFS is not available on the router:
-  * install scripts into /tmp by (you have to solve boot persistence by yourself):    
-    `   
+  * install/extract scripts into /tmp dir (you have to solve boot persistence by yourself):    
+    ```
     root@gateway:/# tar zxvf /tmp/asus-ddns.tgz -C /tmp
-    `
+    ```
 * command completion [ TAB ] in dd-wrt shell (busybox) does not auto-complete asus-ddns.sh
-  * check execute permission and fix: 
-    `   
+  * check execute permission for bin/asus-ddns.sh:
+    ```
     root@gateway:~# ls -l /jffs/bin/asus-ddns.sh
-    -rwxrwxr-x    1 1000     1000          3247 Mar 19 20:44 /jffs/bin/asus-ddns.sh  
-    `
+    -rwxrwxr-x    1 1000     1000          3247 Mar 19 20:44 /jffs/bin/asus-ddns.sh
+    ```    
   * check PATH:  
-    `    
+    ```
     root@gateway:~# echo $PATH
     /bin:/usr/bin:/sbin:/usr/sbin:/jffs/sbin:/jffs/bin:/jffs/usr/sbin:/jffs/usr/bin:/mmc/sbin:/mmc/bin:/mmc/usr/sbin:/mmc/usr/bin:/opt/sbin:/opt/bin:/opt/usr/sbin:/opt/usr/bin
-    `      
+    ```
 * my DNS name is not updated immediately:
   * you have to wait max TTL (120 sec), in average after TTL/2 DNS record should be updated
-  
+    
+* my DDN record is not updated on ppp connect even after waiting TTL:
+  * check execute permission for etc/config/ddns.sh
 
 #### Configuration
+
 Config values are global shell variables (you shoudn't need to touch any of these):
 
     # version info
