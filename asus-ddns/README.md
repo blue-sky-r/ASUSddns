@@ -119,11 +119,19 @@ example of installation to gateway router:
     jffs/etc/config/ddns.ipup
 ```
 
-asus-ddns.sh is placeed to /jffs/bin ... cli script (automaticaly in PATH)
-ddns.ipup is placed to /jffs/etc/config ... executed when ppp interface going up, contains just call to asus-ddns.sh
-    
-Alternatively **ddns.ipup** could be renamed to **ddns.wanup** (consult [dd-wrt WiKi](https://www.dd-wrt.com/wiki/index.php/Script_Execution) for details),
- but .ipup looks more appropriate (have tested both variants, and they are fully functional, but I prefer .ipup).
+The package contains only two scripts:
+
+######asus-ddns.sh
+ * the main cli script to handle all ASUS DDNS functionality
+ * placeed to /jffs/bin (automaticaly located in PATH)
+
+######ddns.ipup
+ * scipt to be executed by dd-wrt on state change (consult [dd-wrt WiKi](https://www.dd-wrt.com/wiki/index.php/Script_Execution) for details)
+ * placed to /jffs/etc/config (executed when ppp interface going up)
+ * contains just call to ASUS DDNS update with logging enabled: 
+   * asus-ddns.sh -log update
+ * alternatively **ddns.ipup** could be renamed to **ddns.wanup**
+   but .ipup feels more appropriate (have tested both variants and they are fully functional)
      
 ### Dependencies
 
@@ -131,6 +139,9 @@ JFFS - The installation package expects /jffs file system active on the router. 
 page **Administration / Management** in section **JFFS2**
  
 ![jffs](screenshots/jffs.png)
+
+
+_Advanced users can install package into /tmp (or any other) dir to avoid using JFFS at all._
 
 ### Usage
 
@@ -205,12 +216,12 @@ Update first checks actual DNS record and executes update only if needed. This e
 
 preferred usage (on ASUS router):
 
-    # asus-ddns.wrt.sh update
+    # asus-ddns.sh update
     UPDATE - dns.name:myname.asuscomm.com not needed as dns.ip:195.12.10.113 = wan.ip:195.12.10.113
 
 explicit usage (on any linux PC):
 
-    # asus-ddns.wrt.sh -mac 11:22:33:44:55:66 -pin 123456 -ip 1.2.3.4 update myhome
+    # asus-ddns.sh -mac 11:22:33:44:55:66 -pin 123456 -ip 1.2.3.4 update myhome
     UPDATE - dns.name:myname.asuscomm.com old.ip:195.12.10.113 -> new.ip:1.2.3.4
     
 The ASUS DNS is using TTL=120 sec. That means in average the updated record should expire from DNS cache in 60 sec. In 
@@ -222,13 +233,13 @@ The ASUS DNS is using TTL=120 sec. That means in average the updated record shou
 
 ASUS do not provide any modality to delete existing DNS record. Based on few forum discussions the once created record is
  kept on DNS server for years (like 2-3 years). So do not relay on expiration. many public DDNS services will expire record
- if not updated frequently. This is definetly not the case of ASUS DDNS. As we know that name is bound to device HW the only
+ if not updated frequently. This is not the case of ASUS DDNS. As we know that name is bound to device HW the only
  way to relase already bound name is to unbound it. Follow these steps to make existing bound name available (unbound):
   
-1) if you have access to the device:
+* you **have access** to the device to which the name is bound:
   * use registration procedure to bind a new dummy name
   * old name will be unbound and become available again immediatly (after TTL)
-2) if you do not have acces to the device:
+* you do **not have acces** to the device to which the name is bound:
   * find MAC and PIN of device to which the name is bound
   * use white-hat cheating to bind new dummy name to this device
   * old name will be unbound and become available again immediatly (after TTL)
@@ -256,20 +267,26 @@ To help troubleshooting use 'wget' action to get exact command line for two oper
 
 Then you can simply copy and paste command line under investigation to any linux PC. As executed on linux PC wget shows deatiled
  error message to help you to identify and rectify the problem. Again, on dd-wrt this is not posiible due to simplistic
- implementation of [wget](http://svn.dd-wrt.com/browser/src/router/busybox/networking/wget.c "wget.c source"). On the wget 
- output look for the most important line **HTTP request sent, awaiting response...** where the response explains problem.
+ implementation of [wget](http://svn.dd-wrt.com/browser/src/router/busybox/networking/wget.c "wget.c source"). 
  
-Possible response codes are:
+ In the wget output look for the line **HTTP request sent, awaiting response...** where the response from the server is shown:
+ 
+    Resolving ns1.asuscomm.com (ns1.asuscomm.com)... 103.10.4.108
+    Connecting to ns1.asuscomm.com (ns1.asuscomm.com)|103.10.4.108|:80... connected.
+    HTTP request sent, awaiting response... 233 |asus.asuscomm.com|name.asuscomm.com
+    Length: unspecified [text/html]
+ 
+Possible http responses are:
  
     200 OK                      ... success - everything OK
-    203
-    220
-    230
+    203 ?
+    220 ?
+    230 ?
     233 FQDN1 FQDN2             ... request for FQDN1 but this device has bound FQDN2 
     297 Invalid Hostname        ... invalid hostname, consult secion Valid DNS hostnames
     298 Invalid Domain          ... invalid domain (has to be asuscomm.com)
     299 Invalid IP format       ... inalid ip address (has to be ipv4)
-    401 Authentication failure  ... incorrect MAC/PIN or non qualified device
+    401 Authentication failure  ... incorrect MAC/PIN or non qualified ASUS device
     
 Preferred REGISTRATION sequence:
 1) [register](#register-dns-record) valid name
@@ -293,7 +310,7 @@ Preferred TEST sequence:
 4) wait at least TTL (2 mins)
 5) [verify](#verify-dns-record) updated dns record
 
-_Please note that extensive writes like syslog on the router will wearout flash memory (it is better to use remote syslog server)_
+_Please note that extensive writes like syslog on the router will wearout flash memory faster (it is better to use remote syslog server)_
  
 #### Possible problems
 
@@ -318,7 +335,7 @@ Config values are global shell variables (you shoudn't need to touch any of thes
     # user agent header sent with requests
     UA='ez-update-3.0.11b5 unknown [] (by Angus Mackay)'
     
-    # linux wget options for trubleshooting outside of dd-wrt
+    # linux wget options for trubleshooting outside of dd-wrt busybox shell
     WGET_OPT='--auth-no-challenge --spider'
     
     # syslog tag
@@ -343,21 +360,21 @@ there are situations like:
  
  * router damage
  * hardware malfunction
- * giving/selling the device to other owner
+ * giving/selling the device to new owner
  * buying new device
  
-when owner registered name bound to the device should be recovered and used again. This is a kind of _white-hat_ cheating.
+when registered name bound to the device should be recovered and used again. This is a kind of _white-hat_ cheating.
  In this case feel free to use asus-ddns toolkit to handle registered name release and transfer. Please use common sense
  as abuse and misuse of ASUS free DDNS service could cause unwanted response (even shutdown of this service) from ASUS.
- See section 'Delete DNS record' how to use white-hat cheating to recover lost access to registered name.  
+ See section [Delete DNS record](#delete-dns-record) how to use white-hat cheating to recover lost access to registered name.  
 
 As always, please use common sense (which is not so common nowdays anymore) when doing ASUS DDNS service updates:
  
-* the wrongest way to update DDNS record is to schedule a cron to do a raw (wget/curl update as shown with 'wget' action) 
-  updates every minute. This should be considered serious DDoS attack on ASUS DNS infrastructe. 
-* the wrong way is to schedule raw wget updates less often, like every 5,10,15 min
-* the not right way is to schedule frequent periodic updates as implemented in asus-ddns 'update' action (dns lookup before update and update only if needed) 
-* the normal way is to do DNS update only on wan ip address change as implemented by ddns.ipup or ddns.wanup (by proper naming and location)
+* the wrongest way - schedule cron to a [raw wget](#troubleshooting) update every minute. 
+  This should be considered as serious DDoS attack on ASUS DNS infrastructe - see above. 
+* the wrong way - schedule frequent (like every 5,10,15 min) cron [raw wget](#troubleshooting) updates 
+* not the right way - schedule frequent periodic cron updates by [asus-ddns.sh update](#update-dns-record) 
+* the right way - do DNS update only on wan ip address change as implemented by ddns.ipup or ddns.wanup (by proper naming and location)
 
 ### Credits
 The main credit goes to [BigNerd95](https://github.com/BigNerd95 "BigNerd95 on GitHub") for his [ASUSddns Project](https://github.com/BigNerd95/ASUSddns "ASUSddns on GitHub")
@@ -365,5 +382,5 @@ The main credit goes to [BigNerd95](https://github.com/BigNerd95 "BigNerd95 on G
 ### History
  version 2017.3 - the initial GitHub release in March 2017
 
-**keywords**: dd-wrt, ddns, asus, RT-N16, dyndns, cli, shell, sh, busybox, dns, jffs, wan, ip
+**keywords**: dd-wrt, ddns, asus, RT-N16, dyndns, cli, shell, sh, busybox, wget, dns, jffs, ns, asuscomm.com, wan, ip
 
