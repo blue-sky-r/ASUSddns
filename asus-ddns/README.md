@@ -1,5 +1,6 @@
 # ASUS Dynamic DNS toolkit for dd-wrt
-This repository contains ASUS DDNS toolkit as command line helper scripts for handling ASUS DDNS operations like:
+This repository contains ASUS DDNS toolkit [asus-ddns.tgz](pkg/asus-ddns.tgz "current version") as command line helper 
+scripts for handling ASUS DDNS operations like:
 * [registration](#register-dns-record) - creating new DNS record
 * [checking](#verify-dns-record) - active DNS record verification
 * [updating](#update-dns-record) - an intelligent active DNS record update 
@@ -339,10 +340,10 @@ _Please note that extensive writes like syslog on the router will wearout flash 
     root@gateway:~# echo $PATH
     /bin:/usr/bin:/sbin:/usr/sbin:/jffs/sbin:/jffs/bin:/jffs/usr/sbin:/jffs/usr/bin:/mmc/sbin:/mmc/bin:/mmc/usr/sbin:/mmc/usr/bin:/opt/sbin:/opt/bin:/opt/usr/sbin:/opt/usr/bin
     ```
-* my DNS name is not updated immediately:
+* my DDNS name is not updated immediately:
   * you have to wait max TTL (120 sec), in average after TTL/2 DNS record should be updated
     
-* my DDN record is not updated on ppp connect even after waiting TTL:
+* my DDNS name is not updated on ppp connect even after waiting TTL:
   * check execute permission for etc/config/ddns.sh
 
 #### Configuration
