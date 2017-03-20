@@ -19,7 +19,7 @@ msg()
     $OUT "$1"
 }
 
-# print msg and  exit with error 255
+# print msg and exit with error 255
 die()
 {
     msg "$1"

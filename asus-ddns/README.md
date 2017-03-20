@@ -99,7 +99,7 @@ In case of any problems please consult the section [Troubleshooting](#trubleshoo
 
 ### Installation
 
-There are two ways to install this ASUS DDNS toolkit package:
+There are two ways to install this ASUS DDNS toolkit package [asus-ddns.tgz](pkg/asus-ddns.tgz "current version"):
 * manually copy files to required locations - for advanced dd-wrt users 
 * package - unpack the provided package [asus-ddns.tgz](pkg/asus-ddns.tgz "current version") (recommended way to install, assumes JFFS active)
 
@@ -136,12 +136,12 @@ The package [asus-ddns.tgz](pkg/asus-ddns.tgz "current version") contains only t
      
 ### Dependencies
 
-JFFS - The installation package [asus-ddns.tgz](pkg/asus-ddns.tgz "current version") expects /jffs file system active on the router. JFFS has to be enabled on dd-wrt 
-page **Administration / Management** in section **JFFS2**
+[JFFS](https://www.dd-wrt.com/wiki/index.php/JFFS) - The installation package [asus-ddns.tgz](pkg/asus-ddns.tgz "current version") expects 
+/jffs file system active on the router. JFFS has to be enabled on dd-wrt page **Administration / Management** in section **JFFS2**
  
 ![jffs](screenshots/jffs.png)
 
-_Advanced users can install package into /tmp (or any other) dir to avoid using JFFS at all._
+_Advanced users can install package [asus-ddns.tgz](pkg/asus-ddns.tgz "current version") into /tmp (or any other) dir to avoid using JFFS at all._
 
 ### Usage
 
@@ -320,7 +320,8 @@ Preferred TEST sequence:
 4) wait at least TTL (2 mins)
 5) [verify](#verify-dns-record) updated dns record
 
-_Please note that extensive writes like syslog on the router will wearout flash memory faster (it is better to use remote syslog server)_
+_Please note that extensive writes like syslog on the router will [wearout](https://www.dd-wrt.com/wiki/index.php/JFFS) 
+flash memory faster (it is better to use remote syslog server)_
  
 #### Possible problems
 
