@@ -121,11 +121,11 @@ example of installation to gateway router:
 
 The package contains only two scripts:
 
-######asus-ddns.sh
+#####asus-ddns.sh
  * the main cli script to handle all ASUS DDNS functionality
  * placeed to /jffs/bin (automaticaly located in PATH)
 
-######ddns.ipup
+#####ddns.ipup
  * scipt to be executed by dd-wrt on state change (consult [dd-wrt WiKi](https://www.dd-wrt.com/wiki/index.php/Script_Execution) for details)
  * placed to /jffs/etc/config (executed when ppp interface going up)
  * contains just call to ASUS DDNS update with logging enabled: 
@@ -313,6 +313,26 @@ Preferred TEST sequence:
 _Please note that extensive writes like syslog on the router will wearout flash memory faster (it is better to use remote syslog server)_
  
 #### Possible problems
+
+* JFFS not available on the router:
+  * install scripts into /tmp by (you have to solve boot persistence by yourself):  
+    
+`    root@gateway:/# tar zxvf /tmp/asus-ddns.tgz -C /tmp`
+
+* command completion [ TAB ] in dd-wrt shell (busybox) does not auto-complete asus-ddns.sh
+  * check execute permission and fix:
+
+`    root@gateway:~# ls -l /jffs/bin/asus-ddns.sh`
+`    -rwxrwxr-x    1 1000     1000          3247 Mar 19 20:44 /jffs/bin/asus-ddns.sh`  
+
+  * check PATH:  
+
+`    root@gateway:~# echo $PATH`
+`    /bin:/usr/bin:/sbin:/usr/sbin:/jffs/sbin:/jffs/bin:/jffs/usr/sbin:/jffs/usr/bin:/mmc/sbin:/mmc/bin:/mmc/usr/sbin:/mmc/usr/bin:/opt/sbin:/opt/bin:/opt/usr/sbin:/opt/usr/bin`   
+   
+* my DNS name is not updated immediately:
+  * you have to wait max TTL (120 sec), in average after TTL/2 DNS record should be updated
+  
 
 #### Configuration
 Config values are global shell variables (you shoudn't need to touch any of these):
