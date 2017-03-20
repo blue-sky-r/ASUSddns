@@ -72,7 +72,7 @@ The registered name is assigned to the device hardware (MAC address and PIN code
 
 As mentioned above the registered name is assigned to the device hardware (MAC/PIN). So keep in mind:
  
-    Whoever knows your MAC address and PIN code controls your ASUSCOMM.COM DNS record - so keep MAC and PIN private
+    Whoever knows your MAC address and PIN code controls your ASUSCOMM.COM DNS record
      
 Do not relay any security asumption on actual DNS record. Always use additional layer of security like certificates,
   ssh tunnel, VPN, etc. Any moderate hacker can hijack your DNS record in ASUSCOMM.COM domain (even by social engineering
@@ -86,32 +86,32 @@ As mentioned above the dd-wrt GUI do not have any support for ASUS DDNS service.
  dd-wrt knowledge ... 
 
 All the communication to ASUS NS server is handled by dd-wrt built-in implemetation of [wget](http://svn.dd-wrt.com/browser/src/router/busybox/networking/wget.c "wget.c source").
- Unfortunately this dd-wrt implementation lacks of any ability to return ASUS server response code back. This choice of wget 
- eliminates the need to install external utility like curl as used in original Nerd implementation. That makes it possible 
- to use ASUS DDNS toolkit also on routers with limited free internal flash memory without active Optware ipkg packaging system. 
+ Unfortunately this dd-wrt implementation lacks any ability to return server http response code back (like 2XX, 3XX codes). 
+ Using this built-in wget eliminates the need to install external utility like curl as used in original [BigNerd95](https://github.com/BigNerd95/ASUSddns) implementation. 
+ That makes it possible to use this ASUS DDNS toolkit also on routers with limited free internal flash memory without active Optware ipkg packaging system. 
 
 Due to minimize flash memory footprint only terse comments are in the script itself. The structure and variable names should
- help to self-documet the code.
+ help to self-document the code. More comments are available in [Configuration](#configuration) section.
  
-In case of any problems please consult the section Troubleshooting. Once ASUS DDNS toolkit is setup correctly, the 
+In case of any problems please consult the section [Troubleshooting](#trubleshooting). Once ASUS DDNS toolkit is setup correctly, the 
  presented solution works flawlesly as you will see bellow.
 
 ### Installation
 
-There are two ways to install ASUS DDNS toolkit:
+There are two ways to install this ASUS DDNS toolkit:
 * manually copy files to required locations - for advanced dd-wrt users 
 * package - unpack the provided package [asus-ddns.tgz](pkg/asus-ddns.tgz "current version") (recommended way to install, assumes JFFS active)
 
 example of installation to gateway router:
 
-1) copy package asus-ddns.tgz to the gateway /tmp directory (or any writable dir):
+1) copy package asus-ddns.tgz to the router /tmp directory (or any other writable dir like /jffs):
 ```
     > scp asus-ddns.tgz gateway:/tmp/
 ```
   
-2) login to gateway router and unpack the package: 
+2) login to the router and extract the package: 
 ```
-    root@gateway:/# tar zxvf /tmp/asus-ddns.tgz
+    root@gateway:/# tar zxvf /tmp/asus-ddns.tgz -C /
     jffs/bin/
     jffs/bin/asus-ddns.sh
     jffs/etc/
