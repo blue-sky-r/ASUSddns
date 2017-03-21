@@ -293,9 +293,9 @@ Possible http responses are:
     220 ?
     230 ?
     233 FQDN1 FQDN2             ... request for FQDN1 but this device has bound FQDN2 
-    297 Invalid Hostname        ... invalid hostname, consult secion Valid DNS hostnames
+    297 Invalid Hostname        ... invalid hostname, consult section Valid DNS hostnames
     298 Invalid Domain          ... invalid domain (has to be asuscomm.com)
-    299 Invalid IP format       ... inalid ip address (has to be ipv4)
+    299 Invalid IP format       ... invalid ip address (has to be ipv4)
     401 Authentication failure  ... incorrect MAC/PIN or non qualified ASUS device
     
 Preferred REGISTRATION sequence:
@@ -331,7 +331,7 @@ flash memory faster (it is better to use remote syslog server)_
     root@gateway:/# tar zxvf /tmp/asus-ddns.tgz -C /tmp
     ```
 * command completion [ TAB ] in dd-wrt shell (busybox) does not auto-complete asus-ddns.sh
-  * check execute permission for bin/asus-ddns.sh:
+  * check execute permission for /jffs/bin/asus-ddns.sh:
     ```
     root@gateway:~# ls -l /jffs/bin/asus-ddns.sh
     -rwxrwxr-x    1 1000     1000          3247 Mar 19 20:44 /jffs/bin/asus-ddns.sh
@@ -342,11 +342,25 @@ flash memory faster (it is better to use remote syslog server)_
     /bin:/usr/bin:/sbin:/usr/sbin:/jffs/sbin:/jffs/bin:/jffs/usr/sbin:/jffs/usr/bin:/mmc/sbin:/mmc/bin:/mmc/usr/sbin:/mmc/usr/bin:/opt/sbin:/opt/bin:/opt/usr/sbin:/opt/usr/bin
     ```
 * my DDNS name is not updated immediately:
-  * you have to wait max TTL (120 sec), in average after TTL/2 DNS record should be updated
+  * you have to wait max TTL time (120 sec), in average after time TTL/2 the DDNS record should be updated
     
-* my DDNS name is not updated on ppp connect even after waiting TTL:
-  * check execute permission for etc/config/ddns.sh
-
+* my DDNS name is not updated on ppp reconnect even after waiting TTL time:
+  * check remote syslog on linux PC for UPDATEs:
+    ```
+    $ grep UPDATE /var/log/syslog
+    Mar 19 10:23:01 gateway dyndns: UPDATE - dns.name:my.asuscomm.com not needed as dns.ip:195.12.10.113 = wan.ip:195.12.10.113
+    ```    
+  * execute update manually from command line:
+    ```
+    root@gateway:~# asus-ddns.sh update
+    UPDATE - dns.name:ticha10.asuscomm.com not needed as dns.ip:195.12.10.113 = wan.ip:195.12.10.113
+    ```  
+  * check execute permission for etc/config/ddns.sh:
+    ```
+    root@gateway:~# ls -l /jffs/etc/config/
+    -rwxr-xr-x    1 1000     1000            34 Mar 19 20:10 ddns.ipup  
+    ```
+    
 #### Configuration
 
 Config values are global shell variables (you shoudn't need to touch any of these):
@@ -357,13 +371,13 @@ Config values are global shell variables (you shoudn't need to touch any of thes
     # URL to retrieve wan ip if ip parameter 'auto' is specified
     AUTO_IP=http://api.ipify.org/
     
-    # key to store FQDN DNS name (empty for no store functionality) 
+    # key to store registered FQDN DNS name in nvram (empty for no store functionality) 
     NVRAM_DNSNAME=wan_dnsname
     
-    # ASUS domain for DynDNS service
+    # ASUS domain for DDNS service
     DOMAIN=asuscomm.com
     
-    # ASUS name server for handling requests
+    # ASUS name server for handling DDNS requests
     NS=ns1.$DOMAIN
     
     # user agent header sent with requests
@@ -381,10 +395,10 @@ Config values are global shell variables (you shoudn't need to touch any of thes
     # FQDN dns_name
     DNS_NAME=${NAME%%.*}.$DOMAIN
     
-    # actual ip of dns_name returned by dns resolver from ASUS name server 
+    # ddns assigned ip for registered dns_name as returned by ASUS name server 
     DNS_IP=$(nslookup $DNS_NAME $NS ...)
     
-    # URL for GET request to register(register.jsp) or update (update.jsp) DNS record
+    # URL for GET request to register(register.jsp) or update (update.jsp) DDNS record
     URL="$NS/ddns/$ACTION.jsp?hostname=$DNS_NAME&myip=$WAN_IP"
 
 ### Cheating
