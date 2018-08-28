@@ -1,14 +1,20 @@
 #!/bin/bash
 
-# Read STDIN and adds info:
+# Read STDIN and adds info in square brackets after numeric values []:
 # - reverse ip lookup for SRC and DST ip addresses
 # - county code lookup for SRC and DST ip addresses
 # - special handling for local LAN ip addresses
+# - lookup PORT numbers to service names
 #
 # Outputs to STDOUT
 
 # Usage example (input from log, output to colorizer):
 # tail -f /var/log/gw/syslog.log | ./resolve.sh | grcat /usr/share/grc/conf.log
+
+# Examples:
+# SRC=192.168.2.1 DST=224.0.0.1 -> SRC=192.168.2.1[/LAN] DST=224.0.0.1[BCST]
+# SRC=104.103.107.203 DST=95.102.102.179 -> SRC=104.103.107.203[deploy.static.akamai.com./NL] DST=95.102.102.179[WAN]
+# SPT=443 DPT=3389 -> SPT=443[https] DPT=3389[rdesktop]
 
 # WAN IP
 #
