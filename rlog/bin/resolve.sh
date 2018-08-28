@@ -1,6 +1,14 @@
 #!/bin/bash
 
-#  tail -f /var/log/syslog | ./resolve.sh | grcat /usr/share/grc/conf.log
+# Read STDIN and adds info:
+# - reverse ip lookup for SRC and DST ip addresses
+# - county code lookup for SRC and DST ip addresses
+# - special handling for local LAN ip addresses
+#
+# Outputs to STDOUT
+
+# Usage example (input from log, output to colorizer):
+# tail -f /var/log/gw/syslog.log | ./resolve.sh | grcat /usr/share/grc/conf.log
 
 # WAN IP
 #
@@ -8,7 +16,7 @@ WAN=$( wget -q -O - ipinfo.io/ip )
 
 [ ! $WAN ] && echo "ERR: Cannot get WAN IP !" && exit 1
 
-# LAN
+# LAN prefix
 #
 LAN=192.168
 
