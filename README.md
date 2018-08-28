@@ -1,7 +1,7 @@
 ## dd-wrt scripts, toolkits, packages
 
-available projects
+available subprojects
 
 [ASUS Dynamic DNS](asus-ddns/ "ASUS DDNS Project") CLI toolkit
 
-[remote syslog](rlog/ "ASUS DDNS Project") Linux client log processing tools
+[Remote Syslog](rlog/ "ASUS DDNS Project") Linux rsyslog processing tools for dd-wrt
