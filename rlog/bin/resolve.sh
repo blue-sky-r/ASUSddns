@@ -9,7 +9,7 @@
 # Outputs to STDOUT
 
 # Usage example (input from log, output to colorizer):
-# tail -f /var/log/gw/syslog.log | ./resolve.sh | grcat /usr/share/grc/conf.log
+# tail -f /var/log/gw/syslog.log | resolve.sh | grcat /usr/share/grc/conf.log
 
 # Examples:
 # SRC=192.168.2.1 DST=224.0.0.1 -> SRC=192.168.2.1[/LAN] DST=224.0.0.1[BCST]
